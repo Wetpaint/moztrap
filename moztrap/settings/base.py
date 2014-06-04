@@ -38,7 +38,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = None
+TIME_ZONE = 'PST8PDT' 
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -155,7 +155,25 @@ CACHES = {
 AUTHENTICATION_BACKENDS = [
     "moztrap.model.core.auth.ModelBackend",
     "moztrap.model.core.auth.BrowserIDBackend",
+    "django_auth_ldap.backend.LDAPBackend",
+    "django.contrib.auth.backends.ModelBackend",
     ]
+
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+
+#AUTH_LDAP_START_TLS = True
+AUTH_LDAP_SERVER_URI = "ldap://10.10.1.1:389"
+AUTH_LDAP_BIND_DN = "cn=Moz Trap,OU=XP,OU=CORP.Users,DC=corp,DC=local"
+AUTH_LDAP_BIND_PASSWORD = "ruDUh9el"
+
+AUTH_LDAP_USER_SEARCH = LDAPSearch("OU=XP,OU=CORP.Users,DC=corp,DC=local",ldap.SCOPE_SUBTREE, "(&(objectCategory=Person)(sAMAccountName=%(user)s))")
+
+AUTH_LDAP_USER_ATTR_MAP = {
+   "first_name":"givenName",
+   "last_name":"sn",
+   "email":"mail"
+}
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
